@@ -1,0 +1,82 @@
+name: Feature Branch CI
+
+on:
+  push:
+    branches:
+      - 'feature/*'
+
+jobs:
+  lint-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run lint check
+        run: echo "Running lint check" # Replace with actual lint command
+
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run unit tests
+        run: echo "Running unit tests" # Replace with actual test command
+
+  code-quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run code quality check
+        run: echo "Running code quality check" # Replace with actual command
+
+  dependency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run dependency check
+        run: echo "Running dependency check" # Replace with actual command
+
+  dockerfile-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Dockerfile lint check
+        uses: hadolint/hadolint-action@v2
+        with:
+          dockerfile: Dockerfile
+
+  docker-image-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t my-app:latest .
+
+      - name: Run Docker image tests
+        run: echo "Running Docker image tests" # Replace with actual tests
+
+  create-pr:
+    runs-on: ubuntu-latest
+    needs: [lint-check, unit-test, code-quality-check, dependency-check, dockerfile-check, docker-image-check]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          base: development
+          branch: feature/auto-pr
+          title: "Automated PR from feature branch"
+          body: "This PR was automatically created after all CI checks passed."
+          labels: automated-pr
